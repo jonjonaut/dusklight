@@ -587,8 +587,6 @@ endif ()
 
 if (APPLE AND NOT IOS AND NOT TVOS)
     find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
-    target_sources(dusklight PRIVATE src/dusk/file_select_macos.mm)
-    set_source_files_properties(src/dusk/file_select_macos.mm PROPERTIES COMPILE_FLAGS -fobjc-arc)
     target_link_libraries(dusklight PRIVATE ${APPKIT_FRAMEWORK})
 endif ()
 
