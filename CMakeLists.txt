@@ -585,6 +585,21 @@ if (APPLE)
     )
 endif ()
 
+if (APPLE AND NOT IOS AND NOT TVOS)
+    find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
+    target_sources(dusklight PRIVATE src/dusk/file_select_macos.mm)
+    set_source_files_properties(src/dusk/file_select_macos.mm PROPERTIES COMPILE_FLAGS -fobjc-arc)
+    target_link_libraries(dusklight PRIVATE ${APPKIT_FRAMEWORK})
+endif ()
+
+if (IOS)
+    find_library(UIKIT_FRAMEWORK UIKit REQUIRED)
+    find_library(UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK UniformTypeIdentifiers REQUIRED)
+    target_sources(dusklight PRIVATE src/dusk/ios/FileSelectDialog.m)
+    set_source_files_properties(src/dusk/ios/FileSelectDialog.m PROPERTIES COMPILE_FLAGS -fobjc-arc)
+    target_link_libraries(dusklight PRIVATE ${UIKIT_FRAMEWORK} ${UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK})
+endif ()
+
 include(extern/aurora/cmake/AuroraCopyRuntimeDLLs.cmake)
 aurora_copy_runtime_dlls(dusklight)
 
