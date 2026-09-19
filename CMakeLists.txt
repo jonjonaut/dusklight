@@ -583,31 +583,6 @@ if (APPLE)
         XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED "YES"
         XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "YES"
     )
-    if (DUSK_ENTITLEMENTS)
-        list(APPEND _apple_bundle_properties
-            XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS ${DUSK_ENTITLEMENTS})
-    endif ()
-    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        list(APPEND _apple_bundle_properties
-            XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME "YES")
-    endif ()
-    set_target_properties(dusklight PROPERTIES ${_apple_bundle_properties})
-
-    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND NOT "${CMAKE_GENERATOR}" STREQUAL "Xcode")
-        set(_sign_nested_commands)
-        if (TARGET crashpad_handler)
-            list(APPEND _sign_nested_commands
-                COMMAND /usr/bin/codesign --force --sign -
-                    "$<TARGET_FILE_DIR:dusklight>/crashpad_handler")
-        endif ()
-        add_custom_command(TARGET dusklight POST_BUILD
-            ${_sign_nested_commands}
-            COMMAND /usr/bin/codesign --force --sign - --entitlements
-                "${DUSK_ENTITLEMENTS}" "$<TARGET_BUNDLE_DIR:dusklight>"
-            COMMENT "Signing Dusklight.app with entitlements"
-            VERBATIM
-        )
-    endif ()
 endif ()
 
 include(extern/aurora/cmake/AuroraCopyRuntimeDLLs.cmake)
